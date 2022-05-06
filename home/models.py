@@ -1,8 +1,10 @@
+from urllib import request
 from django.db import models
+from pkg_resources import require
 
 
 class StudentInfo(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, default='')
     age = models.PositiveIntegerField(default=18)
     school = models.CharField(max_length=200, default='')
 

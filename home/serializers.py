@@ -8,7 +8,7 @@ class StudentInfoSerializer(ModelSerializer):
 
     class Meta:
         model = StudentInfo
-        fields = ['name', 'age']
+        fields = ['id', 'name', 'age', 'school']
         # exclude = [field's name,]
 
     def validate(self, data):
