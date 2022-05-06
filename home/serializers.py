@@ -1,4 +1,6 @@
-from .models import StudentInfo
+from dataclasses import field
+from unicodedata import category
+from .models import Category, StudentInfo, Book
 from rest_framework.serializers import ModelSerializer, ValidationError
 
 
@@ -19,3 +21,17 @@ class StudentInfoSerializer(ModelSerializer):
             raise ValidationError({'error': 'age cannot be less than 18'})
 
         return data
+
+
+class CategorySerializer(ModelSerializer):
+
+    class Meta:
+        model = Category
+        fields = ['name',]
+
+
+class BookSerializer(ModelSerializer):
+    category = CategorySerializer()
+    class Meta:
+        model = Book
+        fields = ['name', 'category']
