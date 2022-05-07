@@ -1,8 +1,24 @@
 from dataclasses import field
 from unicodedata import category
+
 from .models import Category, StudentInfo, Book
 from rest_framework.serializers import ModelSerializer, ValidationError
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
+
+class UserSerializer(ModelSerializer):
+
+    class Meta:
+        model = get_user_model()
+        fields = ['username', 'password']
+
+    def create(self, validated_data):
+        user = User.objects.create(username=validated_data['username'])
+        user.set_password(validated_data['password'])
+        user.save()
+        return validated_data
+        
 
 class StudentInfoSerializer(ModelSerializer):
 
