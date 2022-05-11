@@ -14,7 +14,11 @@ from django.contrib.auth import get_user_model
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 User = get_user_model()
+
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class RegisterUser(APIView):
     def post(self, request):
@@ -22,14 +26,21 @@ class RegisterUser(APIView):
         if serializer.is_valid():
             serializer.save()
             user = User.objects.get(username=serializer.data['username'])
-            token_obj, _ = Token.objects.get_or_create(user=user)
-            return Response({'status': 200, 'payload': serializer.data, 'token': str(token_obj), 'message': 'saved to database'})
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'status': 200, 
+                'payload': serializer.data, 
+                'refresh': str(refresh),
+                'access': str(refresh.access_token), 
+                'token': str(refresh), 
+                'message': 'saved to database'
+                })
         else:
             return Response({'status': 403, 'errors': serializer.errors, 'payload': request.data})
 
 class StudentAPI(APIView):
 
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
